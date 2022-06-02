@@ -1,0 +1,18 @@
+<div class="container">
+  <h1 *ngIf="isLoggedIn()">Hallo {{getUserName()}}!</h1>
+  <h1 *ngIf="!isLoggedIn()">Willkommen bei der besten Nachhilfe!</h1>
+
+  <p class="fließtext">Hier findest du Weltklasse Nachhilfe für deine Bedürfnisse. Die Nachhilfe wird von gut gebildeten
+  Schülern von diversen Hochschulen gehalten. Du kannst natürlich immer einsehen welche Ausbildung die Tutoren
+  haben. Tutoren stellen Angebote mit verschiedenen Terminvorschlägen aus denen du wählen kannst. Falls kein
+  passender Termin zu finden ist kannst du Tutoren gerne auch ein Kommentar im jeweiligen Angebot hinterlassen.</p>
+  <a routerLink="../offers" class="knopf lila">Zu den Angeboten</a><br><br>
+
+  <p class="fließtext">In deinem Bereich findest du, wenn du eingeloogt bist, die Angebote zu denen du Terminanfragen geschickt,
+    Termine die bereits angenommen wurden und auch Termine die schon in der Vergangenheit liegen.</p>
+  <a routerLink="../login" class="knopf lila">Zu deinem Bereich</a>
+  <br><br>
+  <h2>Angebote durchsuchen</h2>
+  <bs-search (offerSelected)="offerSelected($event)"></bs-search>
+</div>
+

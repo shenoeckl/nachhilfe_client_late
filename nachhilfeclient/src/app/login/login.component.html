@@ -1,0 +1,188 @@
+<div class="container">
+<!-----------------------NICHTEINGELOGGT-------------------------------------------------->
+<div *ngIf="!isLoggedIn()">
+
+  <h1>Login</h1>
+
+  <form class="ui large form" [formGroup]="loginForm" (ngSubmit)="login()">
+
+    <div class="field">
+      <label>E-Mail</label>
+      <input type="email" id="username" formControlName="username">
+      <div *ngIf="loginForm.get('username')?.invalid &&
+                (loginForm.get('username')?.dirty ||
+                loginForm.get('username')?.touched) &&
+                loginForm.get('username')?.hasError('required')" class="ui negative message">
+        Benutzername ist verpflichtend!
+      </div>
+
+      <div *ngIf="loginForm.get('username')?.invalid &&
+                (loginForm.get('username')?.dirty ||
+                loginForm.get('username')?.touched) &&
+                loginForm.get('username')?.hasError('email')" class="ui negative message">
+        E-Mail Format ungültig!
+      </div>
+
+    </div>
+    <div class="field">
+      <label>Passwort</label>
+      <input type="password" formControlName="password">
+
+      <div *ngIf="loginForm.get('password')?.invalid &&
+            (loginForm.get('password')?.dirty ||
+            loginForm.get('password')?.touched) &&
+            loginForm.get('password')?.hasError('required')" class="ui negative message">
+        Passwort verpflichtend
+      </div>
+
+    </div>
+
+    <button type="submit" class="knopf lila" [disabled]="loginForm.invalid">Login</button>
+
+  </form>
+
+</div>
+
+<!-----------------------TUTORANSICHT-------------------------------------------------->
+<div *ngIf="isLoggedIn()&&isTutor()">
+  <div class="myinfo-title">
+    <h1>Hallo {{getUserName()}}</h1><button type="button" class="knopf rot" (click)="logout()">Logout</button>
+  </div>
+  <div class="userinfo-container">
+    <span class="userinfotitel">Deine Informationen:</span>
+    <span><b>Email: </b> {{getUserEmail()}}</span>
+    <span *ngIf="getUserDescription()" class="fließtext"><b>Beschreibung: </b> {{getUserDescription()}}</span>
+    <span><b>Ausbildung: </b> {{getUserEducation()}}</span>
+  </div>
+
+  <h2>Warten auf Antwort</h2>
+  <div class="xxd itemswrapper">
+    <a *ngFor="let offer of pendingOffers" class="item bs-offer-list-item"
+       [offer]="offer" [routerLink]="['../offers',offer?.id]" >
+    </a>
+    <div *ngIf="!pendingOffers" class="ui active dimmer">
+      <div class="ui large text loader">Daten werden geladen...</div>
+    </div>
+    <p *ngIf="pendingOffers && !pendingOffers.length">Keine Angebote warten auf eine Antwort</p>
+  </div>
+
+  <h2>Kommende Termine</h2>
+  <div class="xxd itemswrapper">
+    <a *ngFor="let offer of comingOffers" class="item bs-offer-list-item"
+       [offer]="offer" [routerLink]="['../offers',offer?.id]" >
+    </a>
+    <div *ngIf="!comingOffers" class="ui active dimmer">
+      <div class="ui large text loader">Daten werden geladen...</div>
+    </div>
+    <p *ngIf="comingOffers && !comingOffers.length">Du hast keine anstehenden Termine</p>
+  </div>
+
+  <h2>Aktuelle Angebote</h2>
+  <div class="xxd itemswrapper">
+    <a *ngFor="let offer of currentOffers" class="item bs-offer-list-item"
+       [offer]="offer" [routerLink]="['../offers',offer?.id]" >
+    </a>
+    <div *ngIf="!currentOffers" class="ui active dimmer">
+      <div class="ui large text loader">Daten werden geladen...</div>
+    </div>
+    <p *ngIf="currentOffers && !currentOffers.length">Du hast gerade keine offenen Anfragen</p>
+  </div>
+
+
+
+  <h2>Vergangene Angebote</h2>
+  <div class="xxd itemswrapper">
+    <a *ngFor="let offer of pastOffers" class="item bs-offer-list-item"
+       [offer]="offer" [routerLink]="['../offers',offer?.id]" >
+    </a>
+    <div *ngIf="!pastOffers" class="ui active dimmer">
+      <div class="ui large text loader">Daten werden geladen...</div>
+    </div>
+    <p *ngIf="pastOffers && !pastOffers.length">Du hast noch keine vergangenen Anfragen</p>
+  </div>
+
+
+</div>
+
+
+<!-----------------------STUDENTENANSICHT-------------------------------------------------->
+
+<div *ngIf="isLoggedIn()&& !isTutor()">
+  <div class="myinfo-title">
+    <h1>Hallo {{getUserName()}}</h1><button type="button" class="knopf rot" (click)="logout()">Logout</button>
+  </div>
+  <div class="userinfo-container">
+    <span class="userinfotitel">Deine Informationen:</span>
+    <span><b>Email: </b> {{getUserEmail()}}</span>
+    <span *ngIf="getUserDescription()" class="fließtext"><b>Beschreibung: </b> {{getUserDescription()}}</span>
+    <span><b>Ausbildung: </b> {{getUserEducation()}}</span>
+  </div>
+
+  <h2>Angefragte Termine</h2>
+  <div class="xxd itemswrapper">
+    <a *ngFor="let offer of pendingApOffers" class="item bs-offer-list-item"
+       [offer]="offer" [routerLink]="['../offers',offer?.id]" >
+    </a>
+    <div *ngIf="!pendingApOffers" class="ui active dimmer">
+      <div class="ui large text loader">Daten werden geladen...</div>
+    </div>
+    <div  class="buttoninhalt" *ngIf="pendingApOffers && !pendingApOffers.length">Du hast keine angefragten Termine.
+      <br><br>
+      <a routerLink="../offers" class="knopf blau">Termin anfragen</a>
+    </div>
+  </div>
+
+  <h2>Kommende Termine</h2>
+  <div class="xxd itemswrapper">
+    <a *ngFor="let offer of comingApOffers" class="item bs-offer-list-item"
+       [offer]="offer" [routerLink]="['../offers',offer?.id]" >
+    </a>
+    <div *ngIf="!comingApOffers" class="ui active dimmer">
+      <div class="ui large text loader">Daten werden geladen...</div>
+    </div>
+    <p *ngIf="comingApOffers && !comingApOffers.length">
+      Du hast keine kommenden Termine.<br>
+    </p>
+  </div>
+
+
+  <h2>Abgelehnte Termine</h2>
+  <div class="xxd itemswrapper">
+    <a *ngFor="let offer of deniedApOffers" class="item bs-offer-list-item"
+       [offer]="offer" [routerLink]="['../offers',offer?.id]" >
+    </a>
+    <div *ngIf="!deniedApOffers" class="ui active dimmer">
+      <div class="ui large text loader">Daten werden geladen...</div>
+    </div>
+    <p *ngIf="deniedApOffers && !deniedApOffers.length">
+      Du hast keine abgelehnten Termine.<br>
+    </p>
+  </div>
+
+  <h2>Durchgeführte Termine</h2>
+  <div class="xxd itemswrapper">
+    <a *ngFor="let offer of DonePastApOffers" class="item bs-offer-list-item"
+       [offer]="offer" [routerLink]="['../offers',offer?.id]" >
+    </a>
+    <div *ngIf="!DonePastApOffers" class="ui active dimmer">
+      <div class="ui large text loader">Daten werden geladen...</div>
+    </div>
+    <p *ngIf="DonePastApOffers && !DonePastApOffers.length">
+      Du hast noch keine abgeschlossenen Termine.<br>
+    </p>
+  </div>
+
+  <h2>Fehlgeschlagene Termine</h2>
+  <div class="xxd itemswrapper">
+    <a *ngFor="let offer of pastApOffers" class="item bs-offer-list-item"
+       [offer]="offer" [routerLink]="['../offers',offer?.id]" >
+    </a>
+    <div *ngIf="!pastApOffers" class="ui active dimmer">
+      <div class="ui large text loader">Daten werden geladen...</div>
+    </div>
+    <p *ngIf="pastApOffers && !pastApOffers.length">
+      Du hast keine fehlgeschlagenen Termine.<br>
+    </p>
+  </div>
+</div>
+</div>

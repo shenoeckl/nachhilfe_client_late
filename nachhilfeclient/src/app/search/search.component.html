@@ -1,0 +1,16 @@
+<div class="suchsurround" [ngClass]="{loading: isLoading}">
+  <div class="suchleistenborder">
+  <input class="suchleiste" type="text" placeholder="Suchbegriff eingeben..."
+         (keyup)="keyup.emit(searchTerm.value)" #searchTerm />
+    <i class="search icon"></i>
+  </div>
+  <div class="result transition ergebnisse" [ngClass]="{visible: foundOffers.length}">
+    <a href (click)="offerSelected.emit(offer); false" class="result"
+       *ngFor="let offer of foundOffers">
+      <div class="suchergebnis">
+        <div class="textergebnis"><i class="chevron right icon"></i><b>{{offer.title}}</b> für die LVA {{offer.subject}}</div>
+      </div>
+    </a>
+  </div>
+
+</div>

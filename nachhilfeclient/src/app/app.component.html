@@ -1,0 +1,15 @@
+<div class="header">
+  <div class="headerfill">
+    <i class="users icon meehr"></i>
+    <span class="headertext">. FH Oberösterreich Nachhilfe</span>
+  </div>
+  <div class="topbar">
+      <a routerLink="home" routerLinkActive="active"  class="menuitem">Home</a>
+      <a routerLink="offers" routerLinkActive="active" class="menuitem">Angebote</a>
+      <a routerLink="tutor" *ngIf="isLoggedIn() && isTutor()" routerLinkActive="active" class="menuitem">Angebot Formular</a>
+      <a *ngIf="isLoggedIn()" routerLink="login" routerLinkActive="active" class="menuitem">Mein Bereich</a>
+      <a *ngIf="!isLoggedIn()" routerLink="login" routerLinkActive="active" class="menuitem">Login</a>
+  </div>
+</div>
+
+<router-outlet></router-outlet>

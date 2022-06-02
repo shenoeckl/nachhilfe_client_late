@@ -1,0 +1,130 @@
+
+
+<div class="container">
+
+<button [routerLink]="'/offers'" class="backKnopf"><i class="chevron left icon"></i>ZURÜCK ZUR ANGEBOTSLISTE</button><br><br>
+
+<div class="content" *ngIf="offer.id">
+  <div class="detail-title-container">
+    <b *ngIf="offer.id">{{offer.title}}</b> <div class="subject-tag">{{offer.subject}}</div>
+  </div>
+  <div class="fließtext">
+    <b>Status:</b> {{offer.status}}<br>
+    <span *ngIf="offer.description">{{offer.description}}</span>
+  </div>
+
+  <div class="tutorinfo"><b>Tutor: {{user.name}}</b><br>
+    <b>Ausbildung:</b> {{user.education}}
+    <span *ngIf="user.description!=null"><b>Beschreibung: </b>{{user.description}}</span><br>
+    <b>Kontakt:</b> {{user.email}}
+  </div>
+
+  <!-------------------TERMINE---------------------------------------------------------------->
+  <h2 *ngIf="offer.appointments && offer.appointments[0]">Termine</h2>
+  <div class="termin-liste">
+    <div *ngFor="let appointment of offer.appointments">
+      <div class="termin-item {{appointment.status}}">
+        <div class="termin-inhalte">
+          <span><b>{{appointment.label}}</b> am {{appointment.starttime.toLocaleString().substring(0,10)}}
+          von {{appointment.starttime.toLocaleString().substring(11,16)}}
+            bis {{appointment.endtime.toLocaleString().substring(11,16)}}</span>
+          <span><b>Status:</b> {{this.appointment.status}}</span>
+          <span *ngIf="offer.user_id != appointment.user_id"><b>Student:</b> {{this.ApUser.name}}</span>
+        </div>
+
+        <div class="buttons-termine">
+          <!---Termin löschen------------------------------------------------------------------------------->
+          <button *ngIf="appointment.id && offer.user_id==authService.getCurrentUserId() && authService.isTutor()
+                      && offer.status =='Offen' && authService.isLoggedIn()"
+                  class="knopf rot" (click)="removeAppointment(appointment.id)">
+            Löschen
+            <i class="remove icon"></i>
+          </button>
+          <!---TERMIN ANFRAGEN-------------------------------------------------------------->
+          <button *ngIf="appointment.id && authService.isStudent() && appointment.status=='Offen' && authService.isLoggedIn()
+                         && offer.status == 'Offen'"
+                  class="knopf blau"
+                  (click)="requestAppointment(offer, appointment, authService.getCurrentUserId())">
+            Termin anfragen
+          </button>
+          <!---Terminanfrage annehmen oder ablehnen------------------------------------------------->
+          <button *ngIf="appointment.id && authService.isTutor() && appointment.status == 'Angefragt' && authService.isLoggedIn()"
+                  class="knopf grün"
+                  (click)="acceptAppointment(offer, appointment)">
+            Termin bestätigen
+          </button>
+          <!---Terminanfrage annehmen oder ablehnen------------------------------------------------->
+          <button *ngIf="appointment.id && authService.isTutor() && appointment.status == 'Angefragt' && authService.isLoggedIn()"
+                  class="knopf rot"
+                  (click)="denyAppointment(offer, appointment)">
+            Termin ablehnen
+          </button>
+        </div><!--Buttons-->
+      </div><br>
+    </div>
+  </div>
+
+
+  <!---Anderen Termin anfragen-------------------------------------------------------------->
+  <div class="requestdifferentap" *ngIf="authService.isLoggedIn()
+  && authService.isStudent() && offer.status=='Offen'">
+    <h3>Kein passender Termin dabei? Jetzt ein Kommentar hinterlassen:</h3>
+    <form>
+      <label>Anderen Termin vorschlagen:</label><br>
+      <textarea id="comment-text" class="textarea"></textarea>
+      <br>
+      <div class="neben">
+        <button type="submit" class="knopf blau" (click)="setComment(offer)">
+          Absenden
+        </button>
+        <input type="text" id="comment-user" class="noborder" value=" {{this.authService.getCurrentUserName()}}"
+               placeholder=" {{this.authService.getCurrentUserName()}}" readonly>
+      </div>
+    </form>
+  </div>
+
+
+  <!---Kommentare von Studenten bei Tutoren anzeigen-------------------------------------------------------------->
+  <div *ngIf="offer.comment!=null && authService.isLoggedIn() && authService.isTutor()">
+    <h3>Kommentare von Studenten:</h3>
+    <div class="wrapcomment">
+      <p class="comment fließtext">{{offer.comment}}</p>
+      <button *ngIf="offer.comment!=null && offer.user_id==authService.getCurrentUserId() && authService.isTutor()"
+              class="knopf rot" (click)="removeComment(offer)">
+        Kommentar löschen
+        <i class="remove icon"></i>
+      </button>
+    </div>
+  </div>
+</div><br>
+
+<div class="buttons-unten">
+  <!---Bearbeiten und löschen Buttons (Ganzes Angebot) für Tutoren------------------------------------------------>
+  <button *ngIf="offer.id && authService.isLoggedIn() && offer.user_id === authService.getCurrentUserId()
+          && offer.status == 'Offen' && authService.isTutor()" class="knopf rot" (click)="removeOffer()">
+    Löschen
+    <i class="remove icon"></i>
+  </button>
+
+  <a *ngIf="authService.isLoggedIn() && offer.user_id === authService.getCurrentUserId() && offer.status == 'Offen' && authService.isTutor()"
+     class="knopf blau" [routerLink]="['../../tutor',offer?.id]">
+    Bearbeiten
+    <i class="pencil icon"></i>
+  </a>
+
+  <!---Termin vollzogen Buttons------------------------------------------------>
+  <button *ngIf="offer.id && authService.isLoggedIn() && offer.user_id === authService.getCurrentUserId()
+          && offer.status == 'Angenommen' && authService.isTutor()" class="knopf grün"
+          (click)="offerDoneWell(offer, appointment)">
+    Erfolgreich durchgeführt
+    <i class="remove icon"></i>
+  </button>
+
+  <a *ngIf="authService.isLoggedIn() && offer.user_id === authService.getCurrentUserId() && offer.status == 'Angenommen' && authService.isTutor()"
+     class="knopf rot" (click)="offerDoneBad(offer, appointment)">
+    Nicht durchgeführt
+  </a>
+</div>
+
+<!--Container-->
+</div>

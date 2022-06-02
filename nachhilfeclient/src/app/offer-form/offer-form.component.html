@@ -1,0 +1,72 @@
+<div class="container">
+
+<h1>Angebot erstellen</h1>
+<form class="ui large form" [formGroup]="offerForm" (ngSubmit)="submitForm()">
+  <input type="hidden" formControlName="id">
+  <!--TITEL-------------------------->
+  <div class="field">
+    <label>Titel des Angebots*</label>
+    <input formControlName="title">
+    <div *ngIf="errors['title']" class="ui negative message">
+      {{errors['title']}}
+    </div>
+  </div>
+  <!--BESCHREIBUNG-------------------------->
+  <div class="field">
+    <label>Beschreibung</label>
+    <input formControlName="description">
+    <div *ngIf="errors['description']" class="ui negative message">
+      {{errors['description']}}
+    </div>
+  </div>
+  <!--LEHRVERANSTALTUNG-------------------------->
+  <div class="field">
+    <label>Lehrveranstaltung</label>
+    <select formControlName="subject">
+      <option value="Webentwicklung">Webentwicklung</option>
+      <option value="Mathematik">Mathematik</option>
+      <option value="Englisch">Englisch</option>
+      <option value="Lernpsychologie">Lernpsychologie</option>
+      <option value="Kommunikation">Kommunikation</option>
+      <option value="Userinterface Design">Userinterface Design</option>
+    </select>
+    <div *ngIf="errors['subject']" class="ui negative message">
+      {{errors['subject']}}
+    </div>
+  </div>
+  <!--Termine----------------------------------------------------------------------------------------------->
+  <div class="fiel">
+    <label class="terminlabel">Termine</label><br>
+      <button (click)="addAppointmentControl()" class="hinzufügenButton" type="button">
+        <i class="add icon"></i>
+      </button>
+    <div formArrayName="appointments">
+      <div class="fields ap-form" *ngFor="let control of appointments?.controls; index as i; last as l" [formGroupName]="i">
+        <input type="hidden" formControlName="id">
+        <!--LABEL-------------------------->
+        <div class="field ap-formitem">
+          <label>Label/Kurzbeschreibung*</label>
+          <input formControlName="label" placeholder="Prio1">
+        </div>
+        <!--START-------------------------->
+        <div class="field ap-formitem">
+          <label>Start*</label>
+          <input type="datetime-local" formControlName="starttime" min="2022-06-01T07:00">
+          <div *ngIf="errors['starttime']" class="ui negative message">{{ errors['starttime']}}</div>
+        </div>
+        <!--ENDE-------------------------->
+        <div class="field ap-formitem">
+          <label>Ende*</label>
+          <input type="datetime-local" formControlName="endtime" min="2022-06-01T07:00">
+          <div *ngIf="errors['endtime']" class="ui negative message">{{ errors['endtime'] }}</div>
+        </div>
+        <br><hr><br>
+      </div>
+    </div>
+    <div *ngIf="errors['appointments']" class="ui negative message">{{errors['appointments']}}</div>
+  </div>
+
+  <button type="submit" class="knopf lila" [disabled]="offerForm.invalid">Speichern</button>
+</form>
+
+</div>
